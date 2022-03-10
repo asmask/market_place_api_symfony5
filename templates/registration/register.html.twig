@@ -7,7 +7,9 @@
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
     {% endfor %}
 
-    <h1>Register</h1>
+    <h3 class="mb-5">Sign up</h3>
+
+            <div class="form-outline mb-4">
 
     {{ form_start(registrationForm) }}
         {{ form_row(registrationForm.email) }}
@@ -15,7 +17,7 @@
             label: 'Password'
         }) }}
         {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn">Register</button>
+ </div>
+        <button class="btn btn-lg btn-primary" type="submit" >Register</button>
     {{ form_end(registrationForm) }}
 {% endblock %}
