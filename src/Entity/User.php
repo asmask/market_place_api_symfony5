@@ -11,6 +11,11 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\ORM\Mapping\DiscriminatorColumn;
+use Doctrine\ORM\Mapping\DiscriminatorMap;
+use Doctrine\ORM\Mapping\InheritanceType;
 
 /**
  * @ApiResource(
@@ -20,21 +25,24 @@ use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
+ * @InheritanceType("JOINED")
+ * @DiscriminatorColumn(name="discr", type="string")
+ * @DiscriminatorMap({"user" = "User", "client" = "Client", "service" = "Service"})
  * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
+ * @ApiFilter(SearchFilter::class, properties={"email":"exact","discr":"exact"})
  */
-class User implements UserInterface, PasswordAuthenticatedUserInterface
-{
+class User implements UserInterface, PasswordAuthenticatedUserInterface {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("user:read")
+     * @Groups({"user:read","service:read","speciality:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"user:read", "user:write"})
+     * @Groups({"user:read", "user:write","service:read","service:write","speciality:read"})
      */
     private $email;
 
@@ -47,6 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Groups({"user:write","service:write"})
      */
     private $password;
     
@@ -58,19 +67,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"user:read", "user:write"})
+     * @Groups({"user:read", "user:write","service:read","service:write","speciality:read"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"user:read", "user:write"})
+     * @Groups({"user:read", "user:write","service:read","service:write","speciality:read"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"user:read", "user:write"})
+     * @Groups({"user:read", "user:write","service:read","service:write","speciality:read"})
      */
     private $phoneNumber;
 
@@ -263,4 +272,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getIsVerified(): ?bool
+    {
+        return $this->isVerified;
+    }
+
 }
+

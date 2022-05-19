@@ -2,13 +2,12 @@
 
 namespace App\DataPersister;
 
-
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Entity\User;
+use ApiPlatform\Core\DataPersister\DataPersisterInterface;
+use App\Entity\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserDataPersister implements ContextAwareDataPersisterInterface
+class ServiceDataPersister implements DataPersisterInterface
 {
     private $entityManager;
     private UserPasswordHasherInterface $userPasswordHasher;
@@ -19,30 +18,27 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
         $this->userPasswordHasher = $userPasswordHasher;
     }
 
-    public function supports($data, array $context = []): bool
+
+    public function supports($data):bool
     {
-        return $data instanceof User;
+        return $data instanceof Service;
     }
 
     /**
-     * @param User $data
+     * @param Service $data
      */
-    public function persist($data, array $context = [])
+    public function persist($data)
     {
-        if (in_array("ROLE_SERVICE", $data->getRoles())){
-            $data->setRoles(["ROLE_SERVICE"]);
-        }else{
-            $data->setRoles(["ROLE_USER"]);
-        }
-        if ($data->getPlainPassword()) {
-            $data->setPassword($this->userPasswordHasher->hashPassword($data, $data->getPlainPassword()));
+        $data->setRoles(["ROLE_SERVICE"]);
+        if ($data->getPassword()) {
+            $data->setPassword($this->userPasswordHasher->hashPassword($data, $data->getPassword()));
             $data->eraseCredentials();
         }
         $this->entityManager->persist($data);
         $this->entityManager->flush();
     }
 
-    public function remove($data, array $context = [])
+    public function remove($data)
     {
         $this->entityManager->remove($data);
         $this->entityManager->flush();

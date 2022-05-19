@@ -1,14 +1,16 @@
 <?php
 
+
 namespace App\DataPersister;
 
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Entity\User;
+use App\Entity\Client;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserDataPersister implements ContextAwareDataPersisterInterface
+class ClientDataPersister implements ContextAwareDataPersisterInterface
 {
     private $entityManager;
     private UserPasswordHasherInterface $userPasswordHasher;
@@ -21,21 +23,18 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof User;
+        return $data instanceof Client;
     }
 
     /**
-     * @param User $data
+     * @param Client $data
      */
     public function persist($data, array $context = [])
     {
-        if (in_array("ROLE_SERVICE", $data->getRoles())){
-            $data->setRoles(["ROLE_SERVICE"]);
-        }else{
-            $data->setRoles(["ROLE_USER"]);
-        }
-        if ($data->getPlainPassword()) {
-            $data->setPassword($this->userPasswordHasher->hashPassword($data, $data->getPlainPassword()));
+        $data->setRoles(["ROLE_CLIENT"]);
+
+        if ($data->getPassword()) {
+            $data->setPassword($this->userPasswordHasher->hashPassword($data, $data->getPassword()));
             $data->eraseCredentials();
         }
         $this->entityManager->persist($data);
