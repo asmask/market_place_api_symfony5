@@ -13,8 +13,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(formats={"json"},
- *     normalizationContext={"groups"={"service:read"}},
- *     denormalizationContext={"groups"={"service:write"}})
+ *     forceEager=false,
+ *     normalizationContext={"groups"={"service:read"},"enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"service:write"},"enable_max_depth"=true})
  * @ORM\Entity(repositoryClass=ServiceRepository::class)
  * @ApiFilter(SearchFilter::class, properties={"title": "ipartial","speciality.name": "ipartial",
  *     "firstName": "ipartial","lastName": "ipartial"})

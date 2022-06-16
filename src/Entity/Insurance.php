@@ -8,9 +8,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(formats={"json"},)
+ * @ApiResource(formats={"json"},
+ *     forceEager=false,
+ *     normalizationContext={"groups"={"insurance:read"},"enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"insurance:write"},"enable_max_depth"=true})
  * @ORM\Entity(repositoryClass=InsuranceRepository::class)
  */
 class Insurance
@@ -19,21 +23,25 @@ class Insurance
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"insurance:read","insurance:write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"insurance:read","insurance:write","service:read"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"insurance:read","insurance:write","service:read"})
      */
     private $description;
 
     /**
      * @ORM\ManyToMany(targetEntity=Service::class, mappedBy="insurance")
+     * @Groups({"insurance:read","insurance:write"})
      */
     private $services;
 

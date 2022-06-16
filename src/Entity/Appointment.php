@@ -6,10 +6,14 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\AppointmentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 /**
- * @ApiResource(formats={"json"})
+ * @ApiResource(formats={"json"},
+ *     forceEager=false,
+ *     normalizationContext={"groups"={"appointment:read"},"enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"appointment:write"},"enable_max_depth"=true})
  * @ORM\Entity(repositoryClass=AppointmentRepository::class)
  */
 class Appointment
@@ -18,38 +22,45 @@ class Appointment
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"appointment:read","appointment:write","service:read","client:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="time")
+     * @Groups({"appointment:read","appointment:write","service:read","client:read"})
      */
     private $startTime;
 
     /**
      * @ORM\Column(type="time")
+     * @Groups({"appointment:read","appointment:write","service:read","client:read"})
      */
     private $endTime;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"appointment:read","appointment:write","service:read","client:read"})
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"appointment:read","appointment:write","service:read","client:read"})
      */
     private $status;
 
     /**
      * @ORM\ManyToOne(targetEntity=Service::class, inversedBy="appointments")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"appointment:read","appointment:write"})
      */
     private $service;
 
     /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="appointments")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"appointment:read","appointment:write"})
      */
     private $client;
 

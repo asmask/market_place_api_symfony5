@@ -6,10 +6,13 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\TimeSheetRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
-
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(formats={"json"})
+ * @ApiResource(formats={"json"},
+ *     forceEager=false,
+ *     normalizationContext={"groups"={"timeSheet:read"},"enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"timeSheet:write"},"enable_max_depth"=true})
  * @ORM\Entity(repositoryClass=TimeSheetRepository::class)
  */
 class TimeSheet
@@ -23,22 +26,26 @@ class TimeSheet
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"timeSheet:read","timeSheet:write","service:read"})
      */
     private $day;
 
     /**
      * @ORM\Column(type="time")
+     * @Groups({"timeSheet:read","timeSheet:write","service:read"})
      */
     private $startTime;
 
     /**
      * @ORM\Column(type="time")
+     * @Groups({"timeSheet:read","timeSheet:write","service:read"})
      */
     private $endTime;
 
     /**
      * @ORM\ManyToOne(targetEntity=Service::class, inversedBy="timeSheets")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"timeSheet:read","timeSheet:write"})
      */
     private $service;
 

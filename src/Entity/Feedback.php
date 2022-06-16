@@ -6,10 +6,14 @@ use App\Repository\FeedbackRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // gedmo annotations
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 /**
- * @ApiResource(formats={"json"},)
+ * @ApiResource(formats={"json"},
+ *     forceEager=false,
+ *     normalizationContext={"groups"={"feedback:read"},"enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"feedback:write"},"enable_max_depth"=true})
  * @ORM\Entity(repositoryClass=FeedbackRepository::class)
  */
 class Feedback
@@ -18,27 +22,32 @@ class Feedback
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"feedback:read","feedback:write","service:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Groups({"feedback:read","feedback:write","service:read"})
      */
     private $rating;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"feedback:read","feedback:write","service:read"})
      */
     private $comment;
 
     /**
      * @ORM\ManyToOne(targetEntity=Service::class, inversedBy="feedbacks")
+     * @Groups({"feedback:read","feedback:write"})
      */
     private $service;
 
     /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="feedbacks")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"feedback:read","feedback:write"})
      */
     private $client;
 

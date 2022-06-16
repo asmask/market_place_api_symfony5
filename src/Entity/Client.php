@@ -7,25 +7,32 @@ use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(formats={"json"})
+ * @ApiResource(formats={"json"},
+ *     forceEager=false,
+ *     normalizationContext={"groups"={"client:read"},"enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"client:write"},"enable_max_depth"=true})
  * @ORM\Entity(repositoryClass=ClientRepository::class)
  */
 class Client extends User
 {
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"client:read","client:write"})
      */
     private $location;
 
     /**
      * @ORM\OneToMany(targetEntity=Feedback::class, mappedBy="client", orphanRemoval=true)
+     * @Groups({"client:read","client:write"})
      */
     private $feedbacks;
 
     /**
      * @ORM\OneToMany(targetEntity=Appointment::class, mappedBy="client", orphanRemoval=true)
+     * @Groups({"client:read","client:write"})
      */
     private $appointments;
 

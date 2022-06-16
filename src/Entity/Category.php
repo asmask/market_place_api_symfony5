@@ -13,8 +13,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(formats={"json"},
- *     normalizationContext={"groups"={"category:read"}},
- *     denormalizationContext={"groups"={"category:write"}}
+ *     forceEager=false,
+ *     normalizationContext={"groups"={"category:read"},"enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"category:write"},"enable_max_depth"=true}
  * )
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
  */

@@ -20,8 +20,9 @@ use Doctrine\ORM\Mapping\InheritanceType;
 /**
  * @ApiResource(
  * formats={"json"},
- *     normalizationContext={"groups"={"user:read"}},
- *     denormalizationContext={"groups"={"user:write"}}
+ *     forceEager=false,
+ *     normalizationContext={"groups"={"user:read"},"enable_max_depth"=true},
+ *     denormalizationContext={"groups"={"user:write"},"enable_max_depth"=true}
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
@@ -36,7 +37,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"user:read","service:read","speciality:read"})
+     * @Groups({"user:read","service:read","speciality:read","timeSheet:write","feedback:write"})
      */
     private $id;
 
